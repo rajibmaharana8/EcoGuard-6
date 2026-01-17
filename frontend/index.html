@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoGuard AI | Advanced Environmental Surveillance</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="stars-container"></div>
+    <div class="vignette"></div>
+
+    <nav class="glass">
+        <div class="logo">
+            <span class="icon">🛰️</span> <span class="eco">Eco</span>Guard <span class="pro">PRO</span>
+        </div>
+        <div class="status-indicator">
+            <span class="pulse"></span> System Operational
+        </div>
+    </nav>
+
+    <main class="app-container">
+        <!-- Top Section: Control Center -->
+        <section class="control-panel glass">
+            <div class="panel-header">
+                <h3>SURVEILLANCE CONFIGURATION</h3>
+            </div>
+            <div class="control-grid">
+                <div class="ctrl-group">
+                    <label>Inference Mode</label>
+                    <select id="mode-select">
+                        <option value="sat">Satellite (Aerial)</option>
+                        <option value="land">Land/Drone (Ground)</option>
+                    </select>
+                </div>
+                <div class="ctrl-group">
+                    <label>Data Input</label>
+                    <div class="upload-bar" id="drop-zone">
+                        <input type="file" id="file-input" hidden accept="image/*">
+                        <span id="file-name-display">No file selected...</span>
+                        <button class="btn-glow" onclick="document.getElementById('file-input').click()">BROWSE</button>
+                    </div>
+                </div>
+            </div>
+            <div class="system-logs" id="log-feed">
+                <div class="log-entry">System ready. Waiting for input...</div>
+            </div>
+        </section>
+
+        <!-- Bottom Section: Analysis Engine -->
+        <div class="analysis-grid">
+            <!-- Left: Source Feed -->
+            <section class="panel glass">
+                <div class="panel-header">
+                    <h3>SOURCE FEED</h3>
+                </div>
+                <div class="image-display">
+                    <img id="original-img" src="" alt="Source Feed">
+                </div>
+            </section>
+
+            <!-- Right: Neural Insight -->
+            <section class="panel glass">
+                <div class="panel-header">
+                    <h3>NEURAL INSIGHT</h3>
+                    <div id="status-pill" class="status-pill">Standby</div>
+                </div>
+                <div class="image-display results-display">
+                    <img id="heatmap-img" src="" alt="Heatmap Output">
+                    <div class="loader hidden" id="loader">
+                        <div class="radar"></div>
+                    </div>
+                </div>
+                <div class="metrics-overlay">
+                    <div class="metric">
+                        <span class="label">CONFIDENCE SCORE</span>
+                        <div class="progress-container">
+                            <span id="confidence-text" class="value">0%</span>
+                            <div class="meter">
+                                <div id="confidence-bar" class="fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric">
+                        <span class="label">ENVIRONMENTAL THREAT</span>
+                        <span id="threat-level" class="value">LOW</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
