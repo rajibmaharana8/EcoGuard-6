@@ -1,47 +1,91 @@
-<<<<<<< HEAD
-# EcoGuard-6
-=======
 # EcoGuard PRO: Dual-Perspective Illegal Dumping Detector
 
-Utilizing a hybrid architecture of ResNet-FPN (Aerial) and YOLOv8 (Ground), EcoGuard PRO provides state-of-the-art surveillance for environmental protection.
+EcoGuard PRO is a state-of-the-art surveillance system designed to detect illegal dumping sites using a hybrid AI architecture. It seamlessly integrates Aerial (Satellite) and Ground (Drone/Land) perspectives to provide comprehensive environmental monitoring.
 
-## Features
-- **Dual-Perspective Mode**: Switch between Satellite and Land/Drone views.
-- **Hybrid Fusion Heatmaps**: Combines Neural CAM with texture analysis for surgical precision.
-- **Real-time Dashboard**: Glassmorphism UI with live log monitoring.
+## 🚀 Key Features
 
-The classifier exploits ResNet50 as the network backbone and augments it with a Feature Pyramid Network (FPN) architecture. FPN improves performances in object detection when  different scales must be taken into account and thus can benefit also classification tasks in which objects of the same class appear with variable sizes.
-This repository contains a ResNet50+FPN architecture.
+*   **Dual-Perspective Mode**:
+    *   **Satellite Mode**: Utilizes **ResNet50 + FPN** (Feature Pyramid Network) to detect large-scale illegal landfills from aerial imagery.
+    *   **Ground Mode**: Deploys **YOLOv8** combined with a custom **Chaos Analysis** algorithm (texture/variance analysis) to identify trash piles at ground level.
+*   **Hybrid Fusion Heatmaps**: Generates surgical precision heatmaps by fusing Neural Class Activation Maps (CAMs) with texture analysis signals.
+*   **Geo-Tagging & Community Alerts**:
+    *   Automatically logs detection coordinates.
+    *   Triggers **Community Alerts** when a cluster of high-confidence reports (≥3) is detected in a specific zone, simulating notification to municipal authorities.
+*   **Real-time Dashboard**: A modern, glassmorphism-inspired UI for live monitoring and instant analysis feedback.
 
-![fpn (2)](https://user-images.githubusercontent.com/62382874/135090779-132cbc65-4ea1-4b2b-bad2-f8bc19bd0b8.png)
+## 📂 Project Structure
 
-**Dataset:** The architecture was trained with AerialWaste [https://aerialwaste.org/], a public dataset for illegal landfill discovery.
+The project has been restructured for modularity:
 
-**Weights:** Weights can be found and downloaded from this Google Drive [link](https://drive.google.com/drive/folders/1xy9BDFWWFkyaw3P8npEZxpTDFxkzA3NK?usp=sharing). In order to align the pulled repository with the code in `execute_model.ipynb`:
-- create a `weights` folder in the repository root folder
-- place in the just-created `weights` folder the downloaded `checkpoint.pth` file.
+*   **`backend/`**: Contains the FastAPI server and AI models.
+    *   `main.py`: The core application server.
+    *   `models/`: Stores the ResNet and YOLO model weights and architecture definitions.
+    *   `utils/`: Helper scripts for image processing.
+    *   `reports.db`: SQLite database for storing geo-tagged reports.
+*   **`frontend/`**: Contains the client-side user interface.
+    *   `index.html`: Main dashboard interface.
+    *   `style.css`: Modern styling specifications.
+    *   `script.js`: Frontend logic for API communication and UI updates.
+*   **`venv/`**: Python virtual environment.
 
-**Training details:** The model was trained using two GPUs Nvidia GeForce RTX 2080Ti and the following parameters:
-- Learning rate: 0.005;
-- Batch size: 12 (limited by the capacity of our server);
-- Loss function: Binary Cross Entropy;
-- Early stopping patience: 10;
-- Early stopping min delta: 0.0005;
-- Pretrained model: ImageNet pre-trained weights for ResNet50 backbone;
-- Data augmentation: flip and rotation by multiples of 90°;
-- Image size: 800. All images are resized to 800x800 during training;
+## 🛠️ Setup & Installation
 
-Freezing the first two layers -the code of the backbone and the pre-trained weights can also be found in this repository-. 
+### 1. Prerequisites
+Ensure you have Python 3.8+ installed.
 
-A sigmoid function is applied over the last FC layer of the CNN to obtain the actual prediction of the model, that for the binary case of illegal landfills is a value between 0 and 1. 
-
-**Execution:** The notebook `execute_model.ipynb` provides an example of how to load the trained model and execute it on an image to obtain the classification score as well as the CAMs. A couple of example images from Google Maps are provided to allow such execution attempts.
-
-## License
-Creative Commons CC BY licensing scheme (see LICENSE). 
-
-## Cite us
+### 2. Environment Setup
+Create and activate a virtual environment (optional but recommended):
+```bash
+python -m venv venv
+.\venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Linux/Mac
 ```
+
+Install dependencies (create a requirements.txt if not exists or install manually):
+```bash
+pip install fastapi uvicorn torch torchvision opencv-python pillow ultralytics numpy
+```
+
+### 3. Model Weights
+To run the system, you need the pre-trained weights.
+*   **Aerial Model**: Place `checkpoint.pth` (from [Google Drive Link](https://drive.google.com/drive/folders/1xy9BDFWWFkyaw3P8npEZxpTDFxkzA3NK?usp=sharing)) into `backend/models/aerial/`.
+*   **Ground Model**: Ensure `taco_yolov8.pt` is present in `backend/models/ground/`.
+
+### 4. Running the Application
+Navigate to the `backend` directory and start the server:
+```bash
+cd backend
+python main.py
+```
+*   The server will start at `http://0.0.0.0:8000`.
+*   The API documentation is available at `http://localhost:8000/docs`.
+
+### 5. Using the Dashboard
+Once the backend is running, open your browser and visit:
+```
+http://localhost:8000
+```
+*   **Upload**: Drag and drop an image.
+*   **Select Mode**: Choose between "Satellite" or "Land/Drone".
+*   **Analyze**: View the prediction score, status, and generated heatmap.
+
+## 📊 Technical Details
+
+### Aerial Classifier (ResNet50+FPN)
+*   **Backbone**: ResNet50 pre-trained on ImageNet.
+*   **Architecture**: Feature Pyramid Network (FPN) for multi-scale detection.
+*   **Input Size**: Resized to 800x800.
+*   **Training**: Trained on the [AerialWaste](https://aerialwaste.org/) dataset.
+
+### Ground Classifier (YOLOv8 + Chaos)
+*   Computes a "Chaos Index" using Laplacian variance to distinguish unstructured trash from structured objects.
+*   Fuses object detection confidence with texture chaos for robust ground-level detection.
+
+## 📜 License
+Creative Commons CC BY licensing scheme.
+
+## 📚 Cite Us
+```bibtex
 @article{torres2023aerialwaste,
   title={AerialWaste dataset for landfill discovery in aerial and satellite images},
   author={Torres, Rocio Nahime and Fraternali, Piero},
@@ -54,4 +98,3 @@ Creative Commons CC BY licensing scheme (see LICENSE).
 }
 ```
 Visit our site for more details: https://aerialwaste.org/
->>>>>>> 24bb929 (Restructured project into frontend and backend folders)
